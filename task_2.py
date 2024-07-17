@@ -1,41 +1,32 @@
-import collections
 
 
-def is_palindrome(s):
-    string_lower_no_spaces = ''.join(char.lower() for char in s if char.isalnum())
+def binary_search(arr, x):
+    left, right = 0, len(arr) - 1
+    iterations = 0
+    upper_bound = None
 
-    deq = collections.deque(string_lower_no_spaces)
+    while left <= right:
+        iterations += 1
+        mid = (left + right) // 2
 
-    while len(deq) > 1:
-        if deq.popleft() != deq.pop():
-            return False
-    return True
+        if arr[mid] == x:
+            upper_bound = arr[mid]
+            return (iterations, upper_bound)
+        elif arr[mid] < x:
+            left = mid + 1
+        else:
+            right = mid - 1
+            upper_bound = arr[mid]
+
+    # If the element is not found, the upper_bound will be the next element in the sorted array
+    if upper_bound is None and left < len(arr):
+        upper_bound = arr[left]
+
+    return (iterations, upper_bound)
 
 
-test_strings = [
-    "Able was I ere I saw Elba",
-    "Madam, in Eden, I'm Adam",
-    "Step on no pets",
-    "Eva, can I see bees in a cave?",
-    "Mr. Owl ate my metal worm",
-    "Do geese see God?",
-    "A Santa at NASA",
-    "Never odd or even",
-    "Doc, note I dissent. A fast never prevents a fatness. I diet on cod.",
-    "Murder for a jar of red rum",
-    "Go hang a salami, I'm a lasagna hog",
-    "Yo, Banana Boy!",
-    "A Toyota's a Toyota",
-    "A Santa lived as a devil at NASA"
-    "A man a plan a canal Panama",
-    "racecar",
-    "hello",
-    "Was it a car or a cat I saw",
-    "No lemon, no melon"
-]
+sorted_array = [0.2, 0.6, 1.3, 2.9, 3.4, 5.8, 7.9, 9.9]
+test_value = 4.1
 
-for string in test_strings:
-    if is_palindrome(string):
-        print(f'"{string}" is a palindrome.')
-    else:
-        print(f'"{string}" is not a palindrome.')
+result = binary_search(sorted_array, test_value)
+print(result)
