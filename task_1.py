@@ -1,41 +1,53 @@
-import queue
-import random
-import time
-
-request_queue = queue.Queue()
-request_id_counter = 1
 
 
-def generate_request():
-    global request_id_counter
+class HashTable:
+    def __init__(self, size):
+        self.size = size
+        self.table = [[] for _ in range(self.size)]
 
-    request = f"Request {request_id_counter}"
-    request_id_counter += 1
+    def hash_function(self, key):
+        return hash(key) % self.size
 
-    request_queue.put(request)
-    print(f"Generated and added to queue: {request}")
+    def insert(self, key, value):
+        key_hash = self.hash_function(key)
+        key_value = [key, value]
+
+        for pair in self.table[key_hash]:
+            if pair[0] == key:
+                pair[1] = value
+                return True
+
+        self.table[key_hash].append(key_value)
+        return True
+
+    def get(self, key):
+        key_hash = self.hash_function(key)
+        for pair in self.table[key_hash]:
+            if pair[0] == key:
+                return pair[1]
+        return None
+
+    def delete(self, key):
+        key_hash = self.hash_function(key)
+        for i, pair in enumerate(self.table[key_hash]):
+            if pair[0] == key:
+                self.table[key_hash].pop(i)
+                return True
+        return False
 
 
-def process_request():
-    if not request_queue.empty():
-        request = request_queue.get()
+H = HashTable(5)
+H.insert("apple", 10)
+H.insert("orange", 20)
+H.insert("banana", 30)
 
-        print(f"Processing {request}")
-        time.sleep(1)
-    else:
-        print("No requests available to process.")
+print(H.get("apple"))
+print(H.get("orange"))
+print(H.get("banana"))
 
+# test delete method
+H.delete("apple")
+print(H.get("apple"))   # Output: None (key "apple" was deleted)
 
-def main():
-    try:
-        while True:
-            generate_request()
-            time.sleep(random.uniform(0.5, 2))
-
-            process_request()
-    except KeyboardInterrupt:
-        print("\nExiting the program...")
-
-
-if __name__ == "__main__":
-    main()
+# test deleting of non-existent key
+print(H.delete("grape"))  # Output: False (key "grape" does not exist in the hash table)
